@@ -16,5 +16,14 @@ router.get('/search', authMiddleware, employeeController.searchEmployee);
 
 router.get('/', authMiddleware, employeeController.getAllEmployees);
 
+// @route   PUT api/employees/:id/score
+// @desc    Update Employee Performance Score
+// @access  Private
+router.put('/:id/score', authMiddleware, employeeController.updateScore);
+
+// @route   DELETE api/employees/:id
+// @desc    Delete Employee
+// @access  Private
+router.delete('/:id', authMiddleware, employeeController.deleteEmployee);
 
 module.exports = router;

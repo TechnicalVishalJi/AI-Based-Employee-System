@@ -60,3 +60,40 @@ exports.searchEmployee = async (req, res) => {
         res.status(500).json({ error: 'Server error' });
     }
 };
+
+exports.updateScore = async (req, res) => {
+    try {
+        const { performanceScore } = req.body;
+        if (performanceScore === undefined || performanceScore < 0 || performanceScore > 100) {
+            return res.status(400).json({ error: 'Please provide a valid performance score (0-100)' });
+        }
+
+        const employee = await Employee.findByIdAndUpdate(
+            req.params.id,
+            { performanceScore },
+            { new: true } // Returns the updated document
+        );
+
+        if (!employee) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+
+        res.json(employee);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};
+
+exports.deleteEmployee = async (req, res) => {
+    try {
+        const employee = await Employee.findByIdAndDelete(req.params.id);
+        if (!employee) {
+            return res.status(404).json({ error: 'Employee not found' });
+        }
+        res.json({ message: 'Employee removed successfully' });
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ error: 'Server error' });
+    }
+};

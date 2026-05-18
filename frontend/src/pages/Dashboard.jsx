@@ -54,6 +54,41 @@ const Dashboard = () => {
         navigate('/ai-recommendation', { state: { employees } });
     };
 
+    const handleUpdateScore = async (id, currentScore) => {
+        const newScore = window.prompt(`Enter new performance score (0-100) for this employee:`, currentScore);
+        if (newScore === null || newScore === '') return;
+        
+        const numScore = Number(newScore);
+        if (isNaN(numScore) || numScore < 0 || numScore > 100) {
+            alert('Please enter a valid number between 0 and 100.');
+            return;
+        }
+
+        try {
+            await api.put(`/employees/${id}/score`, { performanceScore: numScore });
+            // Update local state to reflect change without full reload
+            setEmployees(employees.map(emp => emp._id === id ? { ...emp, performanceScore: numScore } : emp));
+            alert('Score updated successfully!');
+        } catch (error) {
+            console.error("Error updating score", error);
+            alert(error.response?.data?.error || 'Failed to update score');
+        }
+    };
+
+    const handleDelete = async (id) => {
+        if (!window.confirm('Are you sure you want to delete this employee?')) return;
+        
+        try {
+            await api.delete(`/employees/${id}`);
+            // Remove from local state
+            setEmployees(employees.filter(emp => emp._id !== id));
+            alert('Employee removed successfully!');
+        } catch (error) {
+            console.error("Error deleting employee", error);
+            alert(error.response?.data?.error || 'Failed to delete employee');
+        }
+    };
+
     return (
         <div className="container animate-fade-in">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '2rem' }}>
@@ -127,6 +162,23 @@ const Dashboard = () => {
                                         <span key={i} className="badge">{skill}</span>
                                     ))}
                                 </div>
+                            </div>
+                            
+                            <div style={{ display: 'flex', gap: '0.5rem', marginTop: '1.5rem', borderTop: '1px solid rgba(0,0,0,0.1)', paddingTop: '1rem' }}>
+                                <button 
+                                    onClick={() => handleUpdateScore(emp._id, emp.performanceScore)} 
+                                    className="btn btn-secondary" 
+                                    style={{ flex: 1, padding: '0.5rem', fontSize: '0.85rem' }}
+                                >
+                                    Edit Score
+                                </button>
+                                <button 
+                                    onClick={() => handleDelete(emp._id)} 
+                                    className="btn" 
+                                    style={{ flex: 1, padding: '0.5rem', fontSize: '0.85rem', background: 'rgba(239, 68, 68, 0.1)', color: 'var(--error)', border: '1px solid rgba(239, 68, 68, 0.2)' }}
+                                >
+                                    Delete
+                                </button>
                             </div>
                         </div>
                     ))}
