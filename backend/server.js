@@ -17,6 +17,31 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/employees', require('./routes/employeeRoutes'));
 app.use('/api/ai', require('./routes/aiRoutes'));
 
+// Root endpoint for backend status
+app.get('/', (req, res) => {
+    res.send(`
+        <html>
+            <head>
+                <title>PerfAI Backend</title>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #f8fafc; color: #1e293b; display: flex; justify-content: center; align-items: center; height: 100vh; margin: 0; }
+                    .container { background: white; padding: 3rem; border-radius: 12px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); text-align: center; border-top: 4px solid #4f46e5; }
+                    h1 { color: #4f46e5; margin-bottom: 0.5rem; }
+                    p { color: #64748b; font-size: 1.1rem; }
+                    .status { display: inline-block; padding: 0.25rem 0.75rem; background: #dcfce7; color: #166534; border-radius: 9999px; font-weight: 600; font-size: 0.875rem; margin-top: 1rem; }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>🚀 PerfAI Backend API</h1>
+                    <p>The system is operational and securely accepting requests.</p>
+                    <div class="status">● Status: Active & Running</div>
+                </div>
+            </body>
+        </html>
+    `);
+});
+
 // Error handling middleware
 app.use((err, req, res, next) => {
     console.error(err.stack);
